@@ -29,7 +29,7 @@ If you already know your AWS credentials (access_key_id and secret_access_key, w
 
 Start by logging into AWS: https://console.aws.amazon.com
 
-Click on “Instances” in the left pane, make sure to select N. Virginia as your region
+Click on “Instances” in the left pane, make sure to select Oregon as your region
 ![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual18.png)
 
 Select the dropdown next to your login name and select “Security Credentials”
@@ -54,7 +54,7 @@ AWSSecretKey=c9/flkkasITUmdlQdzbnIu4ff+UgIOQuB/xb
 
 If you already have a Key Pair created you can skip creating a new key pair. You will still need to place a copy of the pem file as shown following.
 
-Making sure that “N. Virginia” is selected as the AWS Region, click “Key Pairs” then “Create Key Pair”
+Making sure that “Oregon” is selected as the AWS Region, click “Key Pairs” then “Create Key Pair”
 ![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual11.png)
 
 Name your key pair name “bosh” and click “Yes”
@@ -97,12 +97,12 @@ mv ~/Downloads/terraform_0/* ~/bin
 ```
 
 Open a new terminal window and run:
-```bash
+```
 terraform -v
 ```
 
 You should get the following output:
-```bash
+```
 Terraform v0.4.0
 ```
 
