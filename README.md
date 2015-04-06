@@ -93,7 +93,7 @@ Visit the following website to download a version of terraform for you local com
 
 After you download the appropriate zip, copy the files to a folder in your PATH, in the example below we use ~/bin
 ```bash
-mv ~/Downloads/terraform_0/* ~/bin
+mv ~/Downloads/terraform_0/\* ~/bin
 ```
 
 Open a new terminal window and run:
