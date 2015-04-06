@@ -184,7 +184,7 @@ Outputs:
   cf_domain                            = XIP
 
 ```
-The three fields which we will need to connect to Cloud Foundry and the Bastion server have been highlighted above.
+The three fields which we will need to connect to Cloud Foundry and the Bastion server have been noted above.
 # Exercise 3 - Connect to Cloud Foundry
 
 In order to connect to Cloud Foundry, you will need to do the following locally (note that you can just use the Bastion server which will have these tools already installed):
@@ -212,7 +212,7 @@ If you are running OSX, download version here and perform the install: https://c
 The CF CLI and other tools are already installed on the bastion server.
 
 ### Connect
-Now that the CF CLI tool has been installed, connect to Cloud Foundry using the 2 highlighted values outputted from Step 2:
+Now that the CF CLI tool has been installed, connect to Cloud Foundry using the 2 noted values outputted from Step 2:
 ```bash
 cf login --skip-ssl-validation -a api.run.52.0.125.51.xip.io -u admin -p c1oudc0wc1oudc0w
 ```
