@@ -107,7 +107,9 @@ You should get the following output:
 
 ```
 Terraform v0.4.0
+
 ```
+.
 
 # Exercise 2 - Configure Install
 
