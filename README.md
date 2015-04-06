@@ -104,6 +104,7 @@ terraform -v
 ```
 
 You should get the following output:
+
 ```
 Terraform v0.4.0
 ```
