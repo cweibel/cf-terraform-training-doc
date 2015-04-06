@@ -30,16 +30,16 @@ If you already know your AWS credentials (access_key_id and secret_access_key, w
 Start by logging into AWS: https://console.aws.amazon.com
 
 Click on “Instances” in the left pane, make sure to select Oregon as your region
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual18.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual18.png)
 
 Select the dropdown next to your login name and select “Security Credentials”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual01.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual01.png)
 
 Then select “Create New Access Key”.  If there are already keys created you may want to stop and consult someone in your organization to obtain the access_key_id and secret_access_key as there is a limit of 2 sets of Access Keys which can exist.
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual10.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual10.png)
 
 You will be prompted to download the security file as a csv.  DO THIS!  You cannot retrieve the aws secret key once the screen is closed.
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual12.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual12.png)
 
 Document the access_key_id and secret_access_key somewhere privately and securely within your organization and keep these safe, these are the only two pieces of information needed to consume AWS resources by fraudsters.
 
@@ -55,10 +55,10 @@ AWSSecretKey=c9/flkkasITUmdlQdzbnIu4ff+UgIOQuB/xb
 If you already have a Key Pair created you can skip creating a new key pair. You will still need to place a copy of the pem file as shown following.
 
 Making sure that “Oregon” is selected as the AWS Region, click “Key Pairs” then “Create Key Pair”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual11.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual11.png)
 
 Name your key pair name “bosh” and click “Yes”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual14.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual14.png)
 
 After you click “Yes” a file will be downloaded to your computer and likely named “bosh.pem.txt”
 
@@ -284,46 +284,46 @@ The following screen shots assume that you had a fresh/unused AWS environment as
 
 ## Instances
 We will start with Instances first, begin by selecting “Instances” and finding the instance named “bosh-vpc-” and check the box, right click and select “Instance State” > “Terminate”.  It is important to kill the bosh server first so other Cloud Foundry servers aren’t created while you are tearing down the rest of the servers.
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual05.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual05.png)
 
 On the Terminate Instances screen, click “Yes, Terminate”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual06.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual06.png)
 
 Now that the Bosh server has been terminated, select the rest of the servers by checking the box to the left of the instance Name, right click and select “Instance State” > “Terminate”.
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual02.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual02.png)
 
 Again, on the Terminate Instances screen click “Yes, Terminate”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual06.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual06.png)
 
 This will possibly take a few minutes but when done the Instance State for all servers should be “terminated”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual04.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual04.png)
 
 
 ## VPC
 VPCs are located in a different part of the AWS Console.
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual16.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual16.png)
 
 Navigate to “Your VPCs”, select the row named “cf-vpc”, right click and select “Delete VPC”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual08.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual08.png)
 
 On the Delete VPC screen, click “Yes, Delete” 
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual07.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual07.png)
 
 
 ## Volumes
 Now that the servers have been terminated, on the left pane to “Elastic Block Store” > “Volumes”. Select all of the volumes by checking the box to the left of the volume Name, right click and select “Delete Volumes”.
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual03.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual03.png)
 
 On the Delete Volumes screen click “Yes, Delete”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual09.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual09.png)
 
 
 ## Elastic IPs
 Navigate on the left pane to “Network & Security” > “Elastic IPs”.  Click all of the boxes to the left of the Elastic IPs, right click and select “Release Addresses”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual17.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual17.png)
 
 On the “Release Addresses” screen click “Yes, Release”
-![](https://github.com/intel-data/dp2-project/blob/master/wikiImages/tf-training-manual15.png)
+![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/wikiImages/tf-training-manual15.png)
 
 
 That’s it!  
