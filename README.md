@@ -43,7 +43,7 @@ You will be assigned a student number, once this has been assigned you can navig
 
 Once you are in this folder, you will see `terraform-aws-cf-install' folder.  Navigate to this folder.
 ```
-cd terrafrom-aws-cf-install
+cd terraform-aws-cf-install
 ```
 
 A quick note: we've already downloaded this repo for you but it would have the same results if you were to clone  https://github.com/cloudfoundry-community/terraform-openstack-cf-install
