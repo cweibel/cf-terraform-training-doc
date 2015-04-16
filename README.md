@@ -8,7 +8,7 @@ This manual will guide you through the steps necessary to configure your compute
 
 # Overview
 
-There are four primary steps to deploying Cloud Foundry (and one to destroy), we will explore each step in the subsequent sections
+For this demo we will be using a Stark & Wayne student lab environment on AWS, we will explore each step in the subsequent sections
  - Prerequisites
  - Configure Install
  - Connect to Cloud Foundry
@@ -19,85 +19,52 @@ There are four primary steps to deploying Cloud Foundry (and one to destroy), we
 
 ## AWS Configuration
 
-We’ll assume that you have an AWS account which has never been used before and you can log into.  We will:
- - Get your Keys:  AWS_ACCESS_KEY and AWS_SECRET_KEY
- - Create a SSH Key
+For the demo we have already created individual AWS accounts and a "jumpbox" on AWS so you do not have to install any tools on your laptop or worry about proxy filtering.
 
-## Get Your AWS Keys
+## Log onto the Jumpbox
 
-If you already know your AWS credentials (access_key_id and secret_access_key, which are not the same as your AWS login and password) you can skip this step.
+We have created a server for you to connect to but you will need an ssh key to connect.  Download the key located here: https://gist.github.com/cweibel/ce13bd44b42e700d63a0
 
-Start by logging into AWS: https://console.aws.amazon.com
+Copy the file to your ~/.ssh folder and name the file "demo"
 
-Click on “Instances” in the left pane, make sure to select Oregon as your region
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual18.png)
-
-Select the dropdown next to your login name and select “Security Credentials”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual01.png)
-
-Then select “Create New Access Key”.  If there are already keys created you may want to stop and consult someone in your organization to obtain the access_key_id and secret_access_key as there is a limit of 2 sets of Access Keys which can exist.
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual10.png)
-
-You will be prompted to download the security file as a csv.  DO THIS!  You cannot retrieve the aws secret key once the screen is closed.
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual12.png)
-
-Document the access_key_id and secret_access_key somewhere privately and securely within your organization and keep these safe, these are the only two pieces of information needed to consume AWS resources by fraudsters.
-
-For the this example deployment we’ll assume the following keys:
+Change the permissions on the file
 ```
-AWSAccessKeyId=AKIAJ354GOFUDGEYRMTT
-AWSSecretKey=c9/flkkasITUmdlQdzbnIu4ff+UgIOQuB/xb
+chmod 400 ~/.ssh/demo
 ```
 
-
-## Create a SSH Key
-
-If you already have a Key Pair created you can skip creating a new key pair. You will still need to place a copy of the pem file as shown following.
-
-Making sure that “Oregon” is selected as the AWS Region, click “Key Pairs” then “Create Key Pair”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual11.png)
-
-Name your key pair name “bosh” and click “Yes”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual14.png)
-
-After you click “Yes” a file will be downloaded to your computer and likely named “bosh.pem.txt”
-
-Rename this file to “bosh” and save it into your ~/.ssh folder on your computer. For example, on OSX you can do this from the terminal:
-```bash
-mkdir -p ~/.ssh
-mv ~/Downloads/bosh.pem.txt ~/.ssh/bosh.pem
+Now you can log onto the jumpbox
+```
+ssh -i ~/.ssh/demo ubuntu@training.gotapaas.eu
 ```
 
-Change the permissions for the bosh.pem file. For example, on OSX you can do this from the terminal:
-```bash
-chmod 400 ~/.ssh/bosh.pem
+## Pick a student
+
+You will be assigned a student number, once this has been assigned you can navigate to `~/students/student#` substituting # for your student number.
+
+Once you are in this folder, you will see `terraform-aws-cf-install' folder.  Navigate to this folder.
+```
+cd terrafrom-aws-cf-install
 ```
 
+A quick note: we've already downloaded this repo for you but it would have the same results if you were to clone  https://github.com/cloudfoundry-community/terraform-openstack-cf-install
 
-
-## Local Configuration
+## Add Docker Services
 
-We’ll assume that you have an OSX or Linux computer you are working from locally.  There are a couple pieces of software which you will need installed:
- - git
- - Terraform 0.4.0+
-
-### Install git
-You likely already have git installed if you do any development locally.  Follow the instructions here to install git: http://git-scm.com/book/en/v2/Getting-Started-Installing-Git a short summary is:
- - OSX - “brew install git”
- - RHEL/CentOS/Fedora - “sudo yum install -y git”
- - Ubuntu/Debian = “sudo apt-get install -y git”
-
-### Install Terraform
-
-Visit the following website to download a version of terraform for you local computer: https://www.terraform.io/downloads.html
-
-After you download the appropriate zip, copy the files to a folder in your PATH, in the example below we use `~/bin`
-
+Once in this folder, we will need to make some changes to `terraform.tfvars` so go ahead and open this file with your favorite editor
 ```
-mv ~/Downloads/terraform_0/* ~/bin
+vi terraform.tfvars
 ```
 
-Open a new terminal window and run:
+To the bottom of the file add the following line which will also install the Docker Services
+```
+install_docker_services = "true"
+```
+
+A quick note: The AWS access and secret keys have already been assigned in this file, when you clone the project on your own these will need to be provided.  There is a step-by-step manual for doing this on the DP2 wiki but isn't needed for this demo.
+
+## Verify Terraform
+
+Terraform 0.4.0 has already been installed on the Jumpbox.  To verify this you can run:
 ```
 terraform -v
 ```
@@ -107,48 +74,19 @@ You should get the following output:
 Terraform v0.4.0
 ```
 
-# Exercise 2 - Configure Install
+For this demo we require v0.4.0, v0.4.2 breaks the install at this time.
 
-Now that we have our AWS keys we can supply these values to Terraform to deploy Cloud Foundry.
+The DP2 Wiki has instructions for installing Terraform but here is a short summary:
+- Download terraform here: https://dl.bintray.com/mitchellh/terraform/terraform_0.4.0_linux_amd64.zip
+- Unzip and place the files somewhere in your $PATH
 
-## Clone the Repo
-On your local computer run the following:
-```bash
-git clone https://github.com/cloudfoundry-community/terraform-aws-cf-install
-cd terraform-aws-cf-install
-cp terraform.tfvars.example terraform.tfvars
-```
 
-Back in Step 1 we obtained AWS Keys:
-```
-AWSAccessKeyId=AKIAJ354GOFUDGEYRMTT
-AWSSecretKey=c9/flkkasITUmdlQdzbnIu4ff+UgIOQuB/xb
-```
 
-We also created a pem file in Step 1
-```
-~/.ssh/bosh.pem
-```
+# Exercise 2 - Deploy Terraform
 
-## Edit Variable File
-This will copy a terraform configuration to your local computer.  Using your favorite text editor (in the examples we will use vi) edit the terraform.tfvars file and supply the AWS keys:
-```bash
-vi terraform.tfvars
-```
-
-After editing your file should look like:
-```
-aws_access_key = "AKIAJ354GOFUDGEYRMTT"
-aws_secret_key = "c9/flkkasITUmdlQdzbnIu4ff+UgIOQuB/xb"
-aws_key_path = "~/.ssh/bosh.pem"
-aws_key_name = "bosh"
-aws_region = "us-west-2"
-network = "10.10"
-cf1_az = "us-west-2a"
-cf2_az = "us-west-2e"
-```
 Now you are ready to deploy, run:
 ```bash
+make clean
 make plan
 make apply
 ```
@@ -187,32 +125,10 @@ Outputs:
 The three fields which we will need to connect to Cloud Foundry and the Bastion server have been noted above.
 # Exercise 3 - Connect to Cloud Foundry
 
-In order to connect to Cloud Foundry, you will need to do the following locally (note that you can just use the Bastion server which will have these tools already installed):
- - Install the CF CLI Tool
- - Use the CF CLI Tool to connect to Cloud Foundry
-
-## Install CF CLI - Local
-
-There are two ways to push CF apps: from your laptop or the bastion server.  If will only be using the bastion server you can skip this step as it is already installed on the bastion server.  If you would like to push CF apps from your laptop there are two methods of installation:
-
-### Method 1 - Use Traveling CF
-
-Open a terminal window on your laptop and run:
-```bash
-curl -s https://raw.githubusercontent.com/cloudfoundry-community/traveling-cf-admin/master/scripts/installer | bash
-```
-
-### Method 2 - Install Directly from Cloud Foundry
-
-You will need to install the CF CLI tool, follow the instructions here: http://docs.cloudfoundry.org/devguide/installcf/install-go-cli.html
-
-If you are running OSX, download version here and perform the install: https://cli.run.pivotal.io/stable?release=macosx64&version=6.10.0&source=github-rel
-
-## Install CF CLI - Bastion Server
-The CF CLI and other tools are already installed on the bastion server.
-
+In order to connect to Cloud Foundry the CF CLI has already been installed on the Bastion server:
+ 
 ### Connect
-Now that the CF CLI tool has been installed, connect to Cloud Foundry using the 2 noted values outputted from Step 2:
+Now that the CF CLI tool has been installed on the Bastion server, ssh to the server and connect to Cloud Foundry using the 2 noted values outputted from Step 2:
 ```bash
 cf login --skip-ssl-validation -a api.run.52.0.125.51.xip.io -u admin -p c1oudc0wc1oudc0w
 ```
@@ -220,27 +136,9 @@ cf login --skip-ssl-validation -a api.run.52.0.125.51.xip.io -u admin -p c1oudc0
 Thats it!  You can now write your application locally and then push it to Cloud Foundry.
 
 
-# Exercise 4 - Deploy Services
+### Create Service Broker
 
-Now that we have Cloud Foundry deployed to AWS let’s deploy some services which the Cloud Foundry applications can consume, such as PostgreSQL and Redis.
-
-## Modify terraform.tfvars
-
-Add the following line to the terraform.tfvars file:
-```bash
-install_docker_services = "true"
-```
-
-Now you are ready to deploy, run:
-```bash
-make plan
-make apply
-```
-
-After 20 or so minutes the Docker Services VM will be deployed. Even after the VM and jobs are running it will take about 10 minutes for all of the docker images to be imported and available for the Service Broker.
-Register Services with Service Broker
-
-In Exercise 3 you installed the CF CLI tools which we will use now to create a service broker.  It may take up to 20 minutes for all of the unicorn web server to fetch all of the docker images. Execute the following on the bastion server:
+Execute the following on the bastion server:
 ```bash
 cf create-service-broker docker containers containers http://cf-containers-broker.run.52.0.125.51.xip.io
 ```
@@ -276,59 +174,11 @@ Now log back into AWS Console and delete any of the following which may have bee
  - VPC
  - Volumes
  - Elastic IPs
- - Key Pairs **
-
-** If you would like to deploy CF again, leave the Key Pair named “bosh”
-
-The following screen shots assume that you had a fresh/unused AWS environment as we will be removing all resources that will incur costs to AWS.
-
-## Instances
-We will start with Instances first, begin by selecting “Instances” and finding the instance named “bosh-vpc-” and check the box, right click and select “Instance State” > “Terminate”.  It is important to kill the bosh server first so other Cloud Foundry servers aren’t created while you are tearing down the rest of the servers.
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual05.png)
-
-On the Terminate Instances screen, click “Yes, Terminate”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual06.png)
-
-Now that the Bosh server has been terminated, select the rest of the servers by checking the box to the left of the instance Name, right click and select “Instance State” > “Terminate”.
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual02.png)
-
-Again, on the Terminate Instances screen click “Yes, Terminate”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual06.png)
-
-This will possibly take a few minutes but when done the Instance State for all servers should be “terminated”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual04.png)
-
-
-## VPC
-VPCs are located in a different part of the AWS Console.
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual16.png)
-
-Navigate to “Your VPCs”, select the row named “cf-vpc”, right click and select “Delete VPC”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual08.png)
-
-On the Delete VPC screen, click “Yes, Delete” 
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual07.png)
-
-
-## Volumes
-Now that the servers have been terminated, on the left pane to “Elastic Block Store” > “Volumes”. Select all of the volumes by checking the box to the left of the volume Name, right click and select “Delete Volumes”.
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual03.png)
-
-On the Delete Volumes screen click “Yes, Delete”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual09.png)
-
-
-## Elastic IPs
-Navigate on the left pane to “Network & Security” > “Elastic IPs”.  Click all of the boxes to the left of the Elastic IPs, right click and select “Release Addresses”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual17.png)
-
-On the “Release Addresses” screen click “Yes, Release”
-![](https://github.com/cweibel/cf-terraform-training-doc/blob/master/images/tf-training-manual15.png)
-
+ - Key Pairs 
+ 
+There is a step by step manual for doing the teardown on the DP2 wiki. Don't worry about doing this as we will tear down the AWS accounts at the end of the day.
 
 That’s it!  
-
-If you would like to deploy Cloud Foundry using this account, repeat Exercise #2 and when done, Exercise #4.
 
 # Resources
 The primary repository is located here:
