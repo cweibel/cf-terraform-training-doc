@@ -125,6 +125,11 @@ Outputs:
 The three fields which we will need to connect to Cloud Foundry and the Bastion server have been noted above.
 # Exercise 3 - Connect to Cloud Foundry
 
+Start by connecting to the Bastion server, from the jumpbox navigate to the student# (~/students/student#) folder and execute:
+```
+./bastion-ssh
+```
+
 In order to connect to Cloud Foundry the CF CLI has already been installed on the Bastion server:
  
 ### Connect
